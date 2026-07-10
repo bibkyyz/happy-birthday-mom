@@ -91,6 +91,30 @@
   .btn:hover {
     transform: scale(1.08);
   }
+
+  .btn-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .balloon-drop {
+    position: fixed;
+    top: -120px;
+    z-index: 5;
+    pointer-events: none;
+    user-select: none;
+    animation-name: balloonFall;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
+  }
+
+  @keyframes balloonFall {
+    0% { transform: translateY(0) translateX(0) rotate(-8deg); opacity: 1; }
+    50% { transform: translateY(55vh) translateX(var(--drift)) rotate(8deg); }
+    100% { transform: translateY(115vh) translateX(var(--drift)) rotate(-8deg); opacity: 0.85; }
+  }
 </style>
 </head>
 <body>
@@ -102,7 +126,10 @@
   <h1>Happy Birthday</h1>
   <h2>Mom!</h2>
   <p class="subtitle">Thank you for everything you do, every single day. Wishing you the happiest of birthdays and a year filled with joy, love, and laughter. We love you! 💖</p>
-  <button class="btn" onclick="burst()">More Confetti! 🎊</button>
+  <div class="btn-row">
+    <button class="btn" onclick="burst()">More Confetti! 🎊</button>
+    <button class="btn" onclick="dropBalloons()">Drop Balloons! 🎈</button>
+  </div>
 </div>
 
 <script>
@@ -183,6 +210,33 @@ function burst() {
     c.speedY = Math.random() * -6 - 2;
     c.speedX = Math.random() * 10 - 5;
     confetti.push(c);
+  }
+}
+
+const balloonEmoji = ['🎈'];
+
+function dropBalloons() {
+  const count = 20;
+  for (let i = 0; i < count; i++) {
+    const balloon = document.createElement('div');
+    balloon.className = 'balloon-drop';
+    balloon.textContent = balloonEmoji[Math.floor(Math.random() * balloonEmoji.length)];
+
+    const size = Math.random() * 2 + 2.5;
+    const duration = Math.random() * 2 + 3;
+    const delay = Math.random() * 0.8;
+    const drift = (Math.random() * 200 - 100) + 'px';
+    const startX = Math.random() * 100;
+
+    balloon.style.left = startX + 'vw';
+    balloon.style.fontSize = size + 'rem';
+    balloon.style.setProperty('--drift', drift);
+    balloon.style.animationDuration = duration + 's';
+    balloon.style.animationDelay = delay + 's';
+    balloon.style.filter = `hue-rotate(${Math.floor(Math.random() * 360)}deg)`;
+
+    document.body.appendChild(balloon);
+    setTimeout(() => balloon.remove(), (duration + delay) * 1000 + 200);
   }
 }
 </script>
